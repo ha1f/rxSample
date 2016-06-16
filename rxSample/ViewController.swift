@@ -7,19 +7,26 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
-class ViewController: UIViewController {
+class ViewController: BaseViewController {
+    
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var addButton: UIButton!
+    var entries = Manager.manager.entries
+    
+    let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        tableView.allowsSelection = false
+        
+        entries.asDriver()
+            .drive(tableView.rx_itemsWithCellIdentifier("cell",cellType: UITableViewCell.self)) { row, item, cell in
+                cell.textLabel?.text = item.japanese + " : " + item.english
+            }
+            .addDisposableTo(disposeBag)
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
 }
-
